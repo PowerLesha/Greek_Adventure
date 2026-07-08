@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#2a6f97" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kate's Journey" />
+    <title>Kate's Greek Adventure 2 — The Birthday Journey</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- Loading / start screen -->
+    <div id="startScreen" class="overlay">
+      <div class="start-card">
+        <div class="start-heart">💖</div>
+        <h1>Kate's Greek Adventure</h1>
+        <div class="part-badge">Part II · The Birthday Journey</div>
+        <p class="start-sub">A little world made for you, with all our love.</p>
+        <button id="startBtn" class="big-btn">Start the Journey ✨</button>
+        <button id="continueBtn" class="ghost-btn" hidden>Continue where I left off</button>
+        <div class="start-foot">Best played in fullscreen · Tap ◀ ▶ to walk</div>
+      </div>
+    </div>
+
+    <!-- In-game HUD is drawn on canvas; DOM buttons below for reliable touch -->
+    <div id="hud" class="hud hidden">
+      <button id="btnLeft" class="dpad" aria-label="Walk left">◀</button>
+      <button id="btnRight" class="dpad" aria-label="Walk right">▶</button>
+    </div>
+
+    <button id="btnSound" class="corner-btn hidden" aria-label="Toggle sound">🔊</button>
+    <button id="btnMenu" class="corner-btn corner-left hidden" aria-label="Menu">☰</button>
+
+    <!-- Dialogue box -->
+    <div id="dialogue" class="dialogue hidden">
+      <canvas id="portrait" width="120" height="120" class="portrait"></canvas>
+      <div class="dialogue-body">
+        <div id="speakerName" class="speaker"></div>
+        <div id="dialogueText" class="d-text"></div>
+        <div class="d-hint">tap to continue ▸</div>
+      </div>
+    </div>
+
+    <!-- Simple menu -->
+    <div id="menu" class="overlay hidden">
+      <div class="menu-card">
+        <h2>Menu</h2>
+        <button id="resumeBtn" class="big-btn">Resume</button>
+        <button id="restartBtn" class="ghost-btn">Restart from beginning</button>
+        <div class="menu-foot">Made with 💖 by Lesha</div>
+      </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+    <script>
+      // Register the service worker so the game works fully offline once loaded.
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./service-worker.js")
+            .catch((err) => console.log("SW registration skipped:", err));
+        });
+      }
+    </script>
+  </body>
+</html>
