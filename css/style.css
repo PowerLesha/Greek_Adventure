@@ -98,6 +98,42 @@ body {
   line-height: 1.5;
 }
 
+.diff-label {
+  color: #8a8296;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.difficulty {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.diff-btn,
+.mdiff-btn {
+  flex: 1;
+  border: 2px solid #d8cdbb;
+  background: #fbf6ee;
+  color: #8a7f6a;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 10px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.06s ease;
+}
+.diff-btn:active,
+.mdiff-btn:active { transform: scale(0.96); }
+.diff-btn.selected,
+.mdiff-btn.selected {
+  border-color: var(--rose);
+  background: var(--rose);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(229, 104, 139, 0.4);
+}
+
 .big-btn {
   display: block;
   width: 100%;
@@ -146,39 +182,7 @@ body {
   margin: 0 0 18px;
 }
 
-/* ---------- HUD ---------- */
-.hud {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  z-index: 30;
-  display: flex;
-  gap: 14px;
-  padding: 0 18px calc(18px + env(safe-area-inset-bottom)) 18px;
-}
-
-.dpad {
-  width: 74px;
-  height: 74px;
-  border-radius: 50%;
-  border: none;
-  font-size: 30px;
-  color: #fff;
-  background: rgba(20, 40, 60, 0.42);
-  backdrop-filter: blur(4px);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  touch-action: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-}
-.dpad:active {
-  background: rgba(244, 185, 66, 0.75);
-  transform: scale(0.94);
-}
-
+/* ---------- Corner buttons ---------- */
 .corner-btn {
   position: fixed;
   top: calc(12px + env(safe-area-inset-top));
@@ -198,60 +202,56 @@ body {
   left: 14px;
 }
 
-/* ---------- Dialogue ---------- */
-.dialogue {
+/* ---------- Platformer controls ---------- */
+.controls {
   position: fixed;
-  left: 50%;
-  bottom: calc(18px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 40;
-  width: min(560px, calc(100% - 28px));
-  background: rgba(255, 247, 236, 0.97);
-  border: 3px solid #fff;
-  border-radius: 18px;
-  padding: 14px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 18px calc(20px + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.controls .move-pad {
   display: flex;
   gap: 14px;
+  pointer-events: none;
+}
+.ctrl-btn {
+  pointer-events: auto;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: rgba(20, 40, 60, 0.4);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  display: flex;
   align-items: center;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
-  animation: pop 0.18s ease;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
 }
-@keyframes pop {
-  from { transform: translateX(-50%) translateY(14px) scale(0.96); opacity: 0; }
-  to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+.ctrl-btn:active {
+  background: rgba(244, 185, 66, 0.8);
+  transform: scale(0.94);
 }
-
-.portrait {
-  width: 74px;
-  height: 74px;
-  border-radius: 14px;
-  background: #cfe8f5;
-  flex: 0 0 auto;
-  border: 2px solid #fff;
+.jump-btn {
+  width: 92px;
+  height: 92px;
+  font-size: 40px;
+  background: rgba(229, 104, 139, 0.55);
 }
-
-.dialogue-body {
-  flex: 1;
-  min-width: 0;
+.jump-btn:active {
+  background: rgba(229, 104, 139, 0.9);
 }
-.speaker {
-  font-weight: 800;
-  color: var(--rose);
-  font-size: 15px;
-  margin-bottom: 3px;
-}
-.d-text {
-  color: var(--ink);
-  font-size: 16px;
-  line-height: 1.42;
-}
-.d-hint {
-  margin-top: 7px;
-  color: #b3aa97;
-  font-size: 12px;
-  text-align: right;
-}
-
 @media (min-width: 620px) {
-  .dpad { width: 82px; height: 82px; }
+  .ctrl-btn { width: 86px; height: 86px; }
+  .jump-btn { width: 100px; height: 100px; }
 }

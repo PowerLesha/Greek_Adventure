@@ -9,8 +9,8 @@
     <meta name="theme-color" content="#2a6f97" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Kate's Journey" />
-    <title>Kate's Greek Adventure 2 — The Birthday Journey</title>
+    <meta name="apple-mobile-web-app-title" content="Kate's Adventure" />
+    <title>Kate's Greek Adventure — Birthday Run</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/png" href="./icons/icon-192.png" />
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />
@@ -19,42 +19,48 @@
   <body>
     <canvas id="game"></canvas>
 
-    <!-- Loading / start screen -->
+    <!-- Start screen -->
     <div id="startScreen" class="overlay">
       <div class="start-card">
         <div class="start-heart">💖</div>
         <h1>Kate's Greek Adventure</h1>
-        <div class="part-badge">Part II · The Birthday Journey</div>
-        <p class="start-sub">A little world made for you, with all our love.</p>
-        <button id="startBtn" class="big-btn">Start the Journey ✨</button>
-        <button id="continueBtn" class="ghost-btn" hidden>Continue where I left off</button>
-        <div class="start-foot">Best played in fullscreen · Tap ◀ ▶ to walk</div>
+        <div class="part-badge">Birthday Run</div>
+        <p class="start-sub">Run, jump &amp; climb across the Greek town to the birthday cake. You must collect <b>ALL 33 candles</b> 🕯️ to light it — miss even one and it won't light! Jump on crabs &amp; seagulls to squash them. <b>Protect your dog</b> 🐾 — stomp crabs before they reach it, or the adventure ends. Hearts are your <b>lives</b> — enemy bites &amp; sea-falls each cost one; grab 💖 to refill. Run out and it's over!</p>
+        <div class="diff-label">Difficulty</div>
+        <div id="difficulty" class="difficulty">
+          <button class="diff-btn" data-diff="easy">Easy</button>
+          <button class="diff-btn selected" data-diff="normal">Normal</button>
+          <button class="diff-btn" data-diff="hard">Hard</button>
+        </div>
+        <button id="startBtn" class="big-btn">Play ✨</button>
+        <button id="continueBtn" class="ghost-btn" hidden>Play again</button>
+        <div class="start-foot">Hold ◀ ▶ to run · tap ⤒ to jump (double-jump friendly timing)</div>
       </div>
     </div>
 
-    <!-- In-game HUD is drawn on canvas; DOM buttons below for reliable touch -->
-    <div id="hud" class="hud hidden">
-      <button id="btnLeft" class="dpad" aria-label="Walk left">◀</button>
-      <button id="btnRight" class="dpad" aria-label="Walk right">▶</button>
+    <!-- On-screen controls -->
+    <div id="controls" class="controls hidden">
+      <div class="move-pad">
+        <button id="btnLeft" class="ctrl-btn" aria-label="Move left">◀</button>
+        <button id="btnRight" class="ctrl-btn" aria-label="Move right">▶</button>
+      </div>
+      <button id="btnJump" class="ctrl-btn jump-btn" aria-label="Jump">⤒</button>
     </div>
 
+    <!-- Corner buttons -->
     <button id="btnSound" class="corner-btn hidden" aria-label="Toggle sound">🔊</button>
     <button id="btnMenu" class="corner-btn corner-left hidden" aria-label="Menu">☰</button>
 
-    <!-- Dialogue box -->
-    <div id="dialogue" class="dialogue hidden">
-      <canvas id="portrait" width="120" height="120" class="portrait"></canvas>
-      <div class="dialogue-body">
-        <div id="speakerName" class="speaker"></div>
-        <div id="dialogueText" class="d-text"></div>
-        <div class="d-hint">tap to continue ▸</div>
-      </div>
-    </div>
-
-    <!-- Simple menu -->
+    <!-- Menu -->
     <div id="menu" class="overlay hidden">
       <div class="menu-card">
         <h2>Menu</h2>
+        <div class="diff-label">Difficulty (restarts the run)</div>
+        <div id="menuDifficulty" class="difficulty">
+          <button class="mdiff-btn" data-diff="easy">Easy</button>
+          <button class="mdiff-btn" data-diff="normal">Normal</button>
+          <button class="mdiff-btn" data-diff="hard">Hard</button>
+        </div>
         <button id="resumeBtn" class="big-btn">Resume</button>
         <button id="restartBtn" class="ghost-btn">Restart from beginning</button>
         <div class="menu-foot">Made with 💖 by Lesha</div>
@@ -63,7 +69,6 @@
 
     <script type="module" src="./js/main.js"></script>
     <script>
-      // Register the service worker so the game works fully offline once loaded.
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker

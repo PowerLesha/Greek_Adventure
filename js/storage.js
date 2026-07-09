@@ -1,5 +1,5 @@
 // Tiny save system using localStorage. Fully offline.
-const KEY = "kate-journey-2-save";
+const KEY = "kate-adventure-3-save";
 
 export function loadSave() {
   try {
@@ -16,10 +16,8 @@ export function writeSave(state) {
       KEY,
       JSON.stringify({
         scene: state.scene,
-        collected: [...state.collected],
-        met: [...state.met],
-        happiness: state.happiness,
-        minigameDone: state.minigameDone,
+        inv: state.inv,
+        flags: state.flags,
       })
     );
   } catch {

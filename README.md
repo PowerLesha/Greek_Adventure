@@ -1,23 +1,31 @@
-# Kate's Greek Adventure 2 — The Birthday Journey 💖
+# Kate's Greek Adventure — The Birthday Quest 💖
 
-A little hand-made birthday game: walk Kate through a Greek seaside town, collect
-the day's treasures, meet everyone who loves her (Mom, Dad, Lucky the dog, and
-Lesha), play a beach mini-game, and reach the surprise at Home.
+A little hand-made birthday game: a **point-and-click adventure** through a Greek
+seaside town. Kate's husband has hidden a birthday surprise in the music box at
+home — solve your way around town, gathering and combining the right things to
+reach it. Along the way you meet everyone who loves her (Mom, Dad, and the dog).
 
-Everything is **hand-drawn in code** (no image files) and runs **100% offline**
+The town is **hand-drawn in code**; the character portraits can use **real
+photos** you drop into `assets/faces/` (see that folder). It runs **100% offline**
 once installed — perfect for playing on a phone in Cyprus with no internet.
 
 ---
 
 ## 🎮 How to play
 
-- Tap and hold **◀ / ▶** (or tap the left/right side of the screen) to walk.
-- Walk up to sparkling items — Kate picks them up automatically.
-- Walk up to a person or the dog (look for the 💬 bubble) to talk.
-- At the beach, drag the basket to catch falling gifts.
-- When a scene is finished, a glowing **➡️** appears on the right — walk into it
-  to travel to the next place.
-- Fill the **Happiness** bar to 100% and reach Home for the birthday surprise 🎂
+- **Tap things** in the scene to look at them and pick them up (sparkles show
+  what you can interact with).
+- **Tap a person** (look for the 💬 bubble) to talk to them.
+- To **use an item**: tap it in the bar at the bottom, then tap where to use it
+  (tap it again to cancel).
+- Tap the glowing **◀ / ▶** arrows at the screen edges to walk between places.
+- Every puzzle needs something from another place — explore, then work out what
+  goes where. Reach the music box at home for the birthday surprise 🎂
+
+The puzzle chain: steady the wobbly café table with a **coaster** to fish out
+Dad's **glasses** → trade them to Dad for **honey** → bring the honey (and a
+**basket**) to Mom for the **cake** → give the beach dog a **bone** so he digs up
+the **key** → open the music box at home. 🎁
 
 Progress saves automatically, so you can close it and continue later.
 
@@ -76,16 +84,24 @@ Then visit `http://localhost:8000`.
 
 ---
 
+## 📸 Real photo faces
+
+Drop a photo of each person into `assets/faces/` using these names:
+`kate`, `husband`, `mom`, `dad`, `dog` (`.jpg`, `.jpeg`, `.png` or `.webp`).
+They're cropped to round portraits automatically and shown when that character
+talks. Any that are missing simply fall back to the hand-drawn portrait, so the
+game always works. Photos never leave the device.
+
 ## ✏️ Easy things to personalise
 
-- **Dog's name:** `js/scenes.js` → `export const DOG_NAME = "Lucky";`
-- **Dialogue / messages:** `js/scenes.js` → each scene's `lines` and `note`.
-- **The final birthday message:** `js/main.js` → `triggerFinale()`.
-- **Character looks (hair/clothes colours):** `js/art.js` → `CHARS`.
-- **Locations & order:** the `scenes` array in `js/scenes.js`.
+- **Names (husband, dog, etc.):** `js/game.js` → `STRINGS`.
+- **Dialogue / messages:** `js/game.js` → each scene's handlers and the finale
+  in `checkFinale()`.
+- **Puzzles, items & locations:** `js/game.js` → `scenes` and `items`.
+- **Hand-drawn character looks (hair/clothes colours):** `js/art.js` → `CHARS`.
 
 If you change any file, bump the cache version in `service-worker.js`
-(`kate-journey-v1` → `v2`) so phones pick up the new version.
+(`kate-adventure-v3` → `v4`) so phones pick up the new version.
 
 ---
 
