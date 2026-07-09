@@ -1,6 +1,6 @@
 // Service worker — makes the game fully playable OFFLINE after the first visit.
 // Bump CACHE version whenever you change any file, so phones fetch the new copy.
-const CACHE = "kate-run-v22";
+const CACHE = "kate-run-v36";
 
 // All files the game needs. Paths are relative to the service worker's location,
 // so this works both locally and on GitHub Pages (in a /repo/ subfolder).
@@ -11,6 +11,7 @@ const ASSETS = [
   "./css/style.css",
   "./js/main.js",
   "./js/platformer.js",
+  "./js/puzzle.js",
   "./js/art.js",
   "./js/audio.js",
   "./js/storage.js",

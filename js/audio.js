@@ -75,16 +75,64 @@ function scheduleMusic() {
   musicTimer = setTimeout(scheduleMusic, 70);
 }
 
+/* ---- iOS: the ring/silent switch mutes Web Audio. Keeping a looping silent
+   <audio> element playing flips the audio session to "playback", which lets the
+   Web-Audio sounds play through the switch. iOS-only so it can't affect others. ---- */
+let silentTag = null;
+function isIOS() {
+  return /iP(hone|ad|od)/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+function silentWavURI() {
+  const sr = 8000, n = 1600, size = 44 + n;
+  const b = new Uint8Array(size), dv = new DataView(b.buffer);
+  const put = (o, str) => { for (let i = 0; i < str.length; i++) b[o + i] = str.charCodeAt(i); };
+  put(0, "RIFF"); dv.setUint32(4, 36 + n, true); put(8, "WAVE");
+  put(12, "fmt "); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+  dv.setUint32(24, sr, true); dv.setUint32(28, sr, true); dv.setUint16(32, 1, true); dv.setUint16(34, 8, true);
+  put(36, "data"); dv.setUint32(40, n, true);
+  for (let i = 0; i < n; i++) b[44 + i] = 128;   // 8-bit silence
+  let bin = ""; for (let i = 0; i < size; i++) bin += String.fromCharCode(b[i]);
+  return "data:audio/wav;base64," + btoa(bin);
+}
+function keepSessionAlive() {
+  if (!isIOS() || muted) return;
+  if (!silentTag) {
+    silentTag = new Audio(silentWavURI());
+    silentTag.loop = true;
+    silentTag.setAttribute("playsinline", "");
+    silentTag.volume = 0.001;
+  }
+  silentTag.play().catch(() => {});
+}
+
+function beginMusic(c) {
+  if (musicOn) return;
+  ensureMusicGain();
+  musicOn = true; nextNote = c.currentTime + 0.15; mIdx = 0; beatCount = 0;
+  scheduleMusic();
+}
+
 export const Sound = {
   unlock() {
-    ac();
+    const c = ac();
+    if (c) {
+      // a 1-sample silent buffer fully primes the audio pipeline on mobile
+      try {
+        const buf = c.createBuffer(1, 1, 22050);
+        const src = c.createBufferSource();
+        src.buffer = buf; src.connect(c.destination); src.start(0);
+      } catch (e) { /* ignore */ }
+      if (c.state === "suspended") c.resume();
+    }
+    keepSessionAlive();
   },
   startMusic() {
     const c = ac();
     if (!c || musicOn) return;
-    ensureMusicGain();
-    musicOn = true; nextNote = c.currentTime + 0.15; mIdx = 0; beatCount = 0;
-    scheduleMusic();
+    // resume() is async on mobile — wait for the clock before scheduling notes
+    if (c.state === "suspended") c.resume().then(() => beginMusic(c)).catch(() => beginMusic(c));
+    else beginMusic(c);
   },
   stopMusic() {
     musicOn = false;
@@ -94,9 +142,20 @@ export const Sound = {
     muted = m;
     const c = ctx;
     if (musicGain && c) musicGain.gain.setTargetAtTime(m ? 0 : 0.05, c.currentTime, 0.05);
+    if (silentTag) { if (m) silentTag.pause(); else silentTag.play().catch(() => {}); }
+    else if (!m) keepSessionAlive();
   },
   isMuted() {
     return muted;
+  },
+  // diagnostic: current AudioContext state ("running" | "suspended" | "none")
+  state() {
+    return ctx ? ctx.state : "none";
+  },
+  // a single obvious beep — used by the on-screen "Test sound" button
+  testBeep() {
+    tone(880, 0, 0.18, "triangle", 0.25);
+    tone(1320, 0.12, 0.22, "triangle", 0.22);
   },
   step() {
     // Soft footstep tick.

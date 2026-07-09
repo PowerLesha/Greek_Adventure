@@ -1,11 +1,18 @@
 // main.js — bootstrap: start the platformer, wire the start screen & menu.
 import { startPlatformer } from "./platformer.js";
+import { startPuzzle } from "./puzzle.js";
 import { Sound } from "./audio.js";
 
 const $ = (id) => document.getElementById(id);
 
 async function boot() {
-  const control = await startPlatformer();
+  // onLevel2 fires from Level 1's win screen → jump straight into the rescue puzzle
+  const control = await startPlatformer({ onLevel2: () => launchLevel2() });
+
+  // Safety net: unlock/keep-alive audio on the first interaction anywhere (mobile).
+  const kickAudio = () => Sound.unlock();
+  window.addEventListener("pointerdown", kickAudio, { passive: true });
+  window.addEventListener("touchend", kickAudio, { passive: true });
 
   const startScreen = $("startScreen");
   const menu = $("menu");
@@ -38,6 +45,19 @@ async function boot() {
 
   $("startBtn").addEventListener("click", () => { control.newGame(currentDiff); enterGame(); });
   $("continueBtn").addEventListener("click", () => { control.continueGame(); enterGame(); });
+
+  // Level 2 — the "Rescue Marshall" puzzle. Pause the platformer (frees the canvas),
+  // run the puzzle, and on finish return to the start screen.
+  function launchLevel2(startAlley) {
+    Sound.unlock(); Sound.startMusic();
+    control.pause();
+    startScreen.classList.add("hidden");
+    menu.classList.add("hidden"); controls.classList.add("hidden");
+    startPuzzle(() => {
+      startScreen.classList.remove("hidden");
+      control.resume();
+    }, { startAlley });
+  }
 
   btnMenu.addEventListener("click", () => { highlight(currentDiff); menu.classList.remove("hidden"); });
   $("resumeBtn").addEventListener("click", () => menu.classList.add("hidden"));

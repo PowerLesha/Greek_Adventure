@@ -334,10 +334,11 @@ export function createSim(level = LEVEL, tuning = DIFFS.normal) {
 /* ================================================================== */
 /*  DOM wrapper: input, camera, rendering                             */
 /* ================================================================== */
-export async function startPlatformer() {
+export async function startPlatformer(opts = {}) {
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
   let W = 0, HH = 0, dpr = 1;
+  let winBtns = [];   // tappable buttons drawn on the win screen (rebuilt each frame)
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2.5);
@@ -377,7 +378,13 @@ export async function startPlatformer() {
     else if (e.key === " " || e.key === "ArrowUp" || e.key === "w") sim.jumpRelease();
   });
   canvas.addEventListener("pointerdown", (e) => {
-    if (sim.state === "won") { if (sim.winT > 0.6) sim.reset(); return; }
+    if (sim.state === "won") {
+      if (sim.winT > 0.6) {
+        for (const b of winBtns) if (e.clientX >= b.x && e.clientX <= b.x + b.w && e.clientY >= b.y && e.clientY <= b.y + b.h) { b.act(); return; }
+        sim.reset();
+      }
+      return;
+    }
     if (sim.state === "lost") { if (sim.overT > 0.6) sim.reset(); return; }
     if (e.clientX > W * 0.5 && e.clientY < HH * 0.78) sim.jumpPress();
   });
@@ -691,7 +698,7 @@ export async function startPlatformer() {
 
     ctx.fillStyle = "#fff"; ctx.textAlign = "center";
     ctx.font = "800 26px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Happy Birthday, Kate! 🎂", W / 2, HH * 0.56);
+    ctx.fillText("You lit the cake! 🎂", W / 2, HH * 0.56);
     ctx.font = "500 18px 'Segoe UI', system-ui, sans-serif";
     const all = sim.collected >= LEVEL.hearts.length;
     ctx.fillText("All " + sim.candlesTotal + " candles lit 🕯️", W / 2, HH * 0.62);
@@ -699,11 +706,25 @@ export async function startPlatformer() {
     if (all) {
       ctx.fillStyle = "#ffe08a"; ctx.font = "700 18px 'Segoe UI', system-ui, sans-serif";
       ctx.fillText("★ Every single one — perfect! ★", W / 2, HH * 0.72);
-      ctx.fillStyle = "#fff"; ctx.font = "500 18px 'Segoe UI', system-ui, sans-serif";
     }
-    ctx.fillText("Tap to play again", W / 2, HH * (all ? 0.77 : 0.73));
-    ctx.textAlign = "left";
     ctx.restore();
+
+    // buttons: on to Level 2, or replay
+    winBtns = [];
+    const bw = Math.min(300, W - 60), bx = W / 2 - bw / 2;
+    const y1 = HH * (all ? 0.77 : 0.74), y2 = y1 + 58;
+    winPill(bx, y1, bw, 46, "🐾 Rescue Marshall (Level 2) →", "#ffd36b", "#6a4a00", () => opts.onLevel2 && opts.onLevel2());
+    winPill(bx, y2, bw, 42, "Play again", "rgba(255,255,255,0.14)", "#fff", () => sim.reset());
+    ctx.textAlign = "left";
+  }
+
+  function winPill(x, y, w, h, label, bg, fg, act) {
+    ctx.fillStyle = bg; H.rr(ctx, x, y, w, h, h / 2); ctx.fill();
+    ctx.fillStyle = fg; ctx.font = "700 16px 'Segoe UI', system-ui, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(label, x + w / 2, y + h / 2 + 1);
+    ctx.textBaseline = "alphabetic";
+    winBtns.push({ x, y, w, h, act });
   }
 
   function drawLost() {
@@ -769,6 +790,8 @@ export async function startPlatformer() {
     continueGame() { const s = loadSave(); start(s && s.flags && s.flags.diff); },
     restart() { start(currentDiff); },
     hasSave() { const s = loadSave(); return !!(s && s.flags && typeof s.flags.best === "number"); },
+    pause() { running = false; },                                    // free the canvas for Level 2
+    resume() { if (!running) { running = true; last = 0; requestAnimationFrame(loop); } },
   };
 }
 
