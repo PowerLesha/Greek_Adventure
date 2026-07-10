@@ -50,7 +50,12 @@ body {
   justify-content: center;
   padding: 16px;
   overflow-y: auto;
-  background: radial-gradient(circle at 50% 30%, #3a7ca5 0%, #16324f 70%, #0d1b2a 100%);
+  background: radial-gradient(
+    circle at 50% 30%,
+    #3a7ca5 0%,
+    #16324f 70%,
+    #0d1b2a 100%
+  );
 }
 
 .start-card,
@@ -70,8 +75,13 @@ body {
   animation: beat 1.4s ease-in-out infinite;
 }
 @keyframes beat {
-  0%, 100% { transform: scale(1); }
-  30% { transform: scale(1.18); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.18);
+  }
 }
 
 .start-card h1 {
@@ -128,7 +138,9 @@ body {
   transition: transform 0.06s ease;
 }
 .diff-btn:active,
-.mdiff-btn:active { transform: scale(0.96); }
+.mdiff-btn:active {
+  transform: scale(0.96);
+}
 .diff-btn.selected,
 .mdiff-btn.selected {
   border-color: var(--rose);
@@ -149,7 +161,9 @@ body {
   border-radius: 14px;
   cursor: pointer;
   box-shadow: 0 6px 0 #cf9a24;
-  transition: transform 0.06s ease, box-shadow 0.06s ease;
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.06s ease;
 }
 .big-btn:active {
   transform: translateY(4px);
@@ -188,11 +202,15 @@ body {
 /* ---------- Corner buttons ---------- */
 .corner-btn {
   position: fixed;
-  top: calc(12px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* sit below the top HUD bar + dog-health row so they never cover the counters */
+  top: calc(88px + env(safe-area-inset-top));
   right: 14px;
   z-index: 30;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.5);
   background: rgba(20, 40, 60, 0.42);
@@ -255,22 +273,44 @@ body {
   background: rgba(229, 104, 139, 0.9);
 }
 @media (min-width: 620px) {
-  .ctrl-btn { width: 86px; height: 86px; }
-  .jump-btn { width: 100px; height: 100px; }
+  .ctrl-btn {
+    width: 86px;
+    height: 86px;
+  }
+  .jump-btn {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 /* ---------- Narrow phones: keep the start/menu cards inside the screen ---------- */
 @media (max-width: 380px) {
   .start-card,
-  .menu-card { padding: 24px 18px 22px; }
-  .start-card h1 { font-size: 23px; }
-  .start-sub { font-size: 14px; margin: 14px 2px 20px; }
+  .menu-card {
+    padding: 24px 18px 22px;
+  }
+  .start-card h1 {
+    font-size: 23px;
+  }
+  .start-sub {
+    font-size: 14px;
+    margin: 14px 2px 20px;
+  }
   .diff-btn,
-  .mdiff-btn { font-size: 13px; padding: 10px 1px; }
-  .big-btn { font-size: 18px; }
+  .mdiff-btn {
+    font-size: 13px;
+    padding: 10px 1px;
+  }
+  .big-btn {
+    font-size: 18px;
+  }
 }
 @media (max-width: 330px) {
-  .start-card h1 { font-size: 21px; }
+  .start-card h1 {
+    font-size: 21px;
+  }
   .diff-btn,
-  .mdiff-btn { font-size: 12px; }
+  .mdiff-btn {
+    font-size: 12px;
+  }
 }
