@@ -512,11 +512,8 @@ function drawDog(ctx, x, y, len, facing, phase) {
     ctx.closePath(); ctx.fill();
   }
   circle(ctx, hx, hy, hr, tan);
-  // topknot tuft + pink bow
+  // topknot tuft
   circle(ctx, hx, hy - hr * 0.95, hr * 0.42, tanD);
-  circle(ctx, hx - 3 * s, hy - hr * 1.05, 3 * s, "#e5688b");
-  circle(ctx, hx + 3 * s, hy - hr * 1.05, 3 * s, "#e5688b");
-  circle(ctx, hx, hy - hr * 1.05, 1.7 * s, "#c94f74");
   // muzzle + nose
   ctx.fillStyle = tan;
   ctx.beginPath(); ctx.ellipse(hx + dir * 6 * s, hy + 3 * s, 6 * s, 5 * s, 0, 0, Math.PI * 2); ctx.fill();

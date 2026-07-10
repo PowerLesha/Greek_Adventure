@@ -1,6 +1,6 @@
 // Service worker — makes the game fully playable OFFLINE after the first visit.
 // Bump CACHE version whenever you change any file, so phones fetch the new copy.
-const CACHE = "kate-run-v36";
+const CACHE = "kate-run-v38";
 
 // All files the game needs. Paths are relative to the service worker's location,
 // so this works both locally and on GitHub Pages (in a /repo/ subfolder).

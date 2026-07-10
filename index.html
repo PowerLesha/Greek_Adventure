@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -9,8 +9,8 @@
     <meta name="theme-color" content="#2a6f97" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Kate's Adventure" />
-    <title>Kate's Greek Adventure — Birthday Run</title>
+    <meta name="apple-mobile-web-app-title" content="Приключение Кейт" />
+    <title>Греческое приключение Кейт — Праздничный забег</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/png" href="./icons/icon-192.png" />
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />
@@ -23,47 +23,47 @@
     <div id="startScreen" class="overlay">
       <div class="start-card">
         <div class="start-heart">💖</div>
-        <h1>Kate's Greek Adventure</h1>
-        <div class="part-badge">Birthday Run</div>
-        <p class="start-sub">Run, jump &amp; climb across the Greek town to the birthday cake. You must collect <b>ALL 33 candles</b> 🕯️ to light it — miss even one and it won't light! Jump on crabs &amp; seagulls to squash them. <b>Protect your dog</b> 🐾 — stomp crabs before they reach it, or the adventure ends. Hearts are your <b>lives</b> — enemy bites &amp; sea-falls each cost one; grab 💖 to refill. Run out and it's over!</p>
-        <div class="diff-label">Difficulty</div>
+        <h1>Греческое приключение Кейт</h1>
+        <div class="part-badge">Праздничный забег</div>
+        <p class="start-sub">Беги, прыгай и карабкайся по греческому городку к праздничному торту. Нужно собрать <b>ВСЕ 33 свечки</b> 🕯️, чтобы его зажечь — пропустишь хоть одну, и он не загорится! Прыгай на крабов и чаек, чтобы их расплющить. <b>Защищай свою собаку</b> 🐾 — топчи крабов, пока они до неё не добрались, иначе приключение закончится. Сердечки — это твои <b>жизни</b>: укусы врагов и падения в море отнимают по одному; хватай 💖, чтобы пополнить. Кончатся — и всё!</p>
+        <div class="diff-label">Сложность</div>
         <div id="difficulty" class="difficulty">
-          <button class="diff-btn" data-diff="easy">Easy</button>
-          <button class="diff-btn selected" data-diff="normal">Normal</button>
-          <button class="diff-btn" data-diff="hard">Hard</button>
+          <button class="diff-btn" data-diff="easy">Легко</button>
+          <button class="diff-btn selected" data-diff="normal">Нормально</button>
+          <button class="diff-btn" data-diff="hard">Сложно</button>
         </div>
-        <button id="startBtn" class="big-btn">Play ✨</button>
-        <button id="continueBtn" class="ghost-btn" hidden>Play again</button>
-        <div class="start-foot">Hold ◀ ▶ to run · tap ⤒ to jump (double-jump friendly timing)</div>
+        <button id="startBtn" class="big-btn">Играть ✨</button>
+        <button id="continueBtn" class="ghost-btn" hidden>Играть снова</button>
+        <div class="start-foot">Держи ◀ ▶ чтобы бежать · нажми ⤒ чтобы прыгнуть (двойной прыжок в удобном ритме)</div>
       </div>
     </div>
 
     <!-- On-screen controls -->
     <div id="controls" class="controls hidden">
       <div class="move-pad">
-        <button id="btnLeft" class="ctrl-btn" aria-label="Move left">◀</button>
-        <button id="btnRight" class="ctrl-btn" aria-label="Move right">▶</button>
+        <button id="btnLeft" class="ctrl-btn" aria-label="Влево">◀</button>
+        <button id="btnRight" class="ctrl-btn" aria-label="Вправо">▶</button>
       </div>
-      <button id="btnJump" class="ctrl-btn jump-btn" aria-label="Jump">⤒</button>
+      <button id="btnJump" class="ctrl-btn jump-btn" aria-label="Прыжок">⤒</button>
     </div>
 
     <!-- Corner buttons -->
-    <button id="btnSound" class="corner-btn hidden" aria-label="Toggle sound">🔊</button>
-    <button id="btnMenu" class="corner-btn corner-left hidden" aria-label="Menu">☰</button>
+    <button id="btnSound" class="corner-btn hidden" aria-label="Звук">🔊</button>
+    <button id="btnMenu" class="corner-btn corner-left hidden" aria-label="Меню">☰</button>
 
     <!-- Menu -->
     <div id="menu" class="overlay hidden">
       <div class="menu-card">
-        <h2>Menu</h2>
-        <div class="diff-label">Difficulty (restarts the run)</div>
+        <h2>Меню</h2>
+        <div class="diff-label">Сложность (перезапустит игру)</div>
         <div id="menuDifficulty" class="difficulty">
-          <button class="mdiff-btn" data-diff="easy">Easy</button>
-          <button class="mdiff-btn" data-diff="normal">Normal</button>
-          <button class="mdiff-btn" data-diff="hard">Hard</button>
+          <button class="mdiff-btn" data-diff="easy">Легко</button>
+          <button class="mdiff-btn" data-diff="normal">Нормально</button>
+          <button class="mdiff-btn" data-diff="hard">Сложно</button>
         </div>
-        <button id="resumeBtn" class="big-btn">Resume</button>
-        <button id="restartBtn" class="ghost-btn">Restart from beginning</button>
-        <div class="menu-foot">Made with 💖 by Lesha</div>
+        <button id="resumeBtn" class="big-btn">Продолжить</button>
+        <button id="restartBtn" class="ghost-btn">Начать сначала</button>
+        <div class="menu-foot">Сделано с 💖 Лёшей</div>
       </div>
     </div>
 

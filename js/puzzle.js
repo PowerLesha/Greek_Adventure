@@ -14,8 +14,8 @@ import { Sound } from "./audio.js";
    M  Marshall's cage (reach it — with a key if the level has any — to win)   */
 export const PUZZLES = [
   {
-    name: "The Back Alley",
-    hint: "Wind through the alley, grab the key 🔑, then reach Marshall.",
+    name: "Закоулок",
+    hint: "Пройди по закоулку, возьми ключ 🔑 и доберись до Маршалла.",
     rows: [
       "#########",
       "#@  #   #",
@@ -28,8 +28,8 @@ export const PUZZLES = [
     ],
   },
   {
-    name: "Lock & Key",
-    hint: "Push the crate 📦 onto the paw-plate 🐾 to open the gate — and grab the key 🔑!",
+    name: "Замок и ключ",
+    hint: "Толкни ящик 📦 на плиту-лапку 🐾, чтобы открыть ворота — и возьми ключ 🔑!",
     rows: [
       "#########",
       "#@ +#M  #",
@@ -42,8 +42,8 @@ export const PUZZLES = [
     ],
   },
   {
-    name: "The Dog-napper's Den",
-    hint: "Both crates 📦 onto the paw-plates 🐾 AND grab the key 🔑 — the final rescue!",
+    name: "Логово похитителя",
+    hint: "Оба ящика 📦 на плиты-лапки 🐾 И возьми ключ 🔑 — последнее спасение!",
     rows: [
       "#########",
       "#@  #M  #",
@@ -186,15 +186,15 @@ export function createPuzzle(def) {
 /*  DOM wrapper: render, input, story → puzzles → victory flow        */
 /* ================================================================== */
 const STORY = [
-  "That thieving BIRD is the",
-  "dog-napper of the old town!",
+  "Эта воровка-ПТИЦА —",
+  "похитительница собак старого города!",
   "",
-  "It carried Marshall off into the",
-  "twisting maze of back-alleys.",
+  "Она унесла Маршалла в",
+  "запутанный лабиринт закоулков.",
   "",
-  "Help Kate through the maze —",
-  "push crates, find keys, and",
-  "bring Marshall home safe. 🐾",
+  "Проведи Кейт через лабиринт —",
+  "толкай ящики, ищи ключи и",
+  "верни Маршалла домой целым. 🐾",
 ];
 
 export function startPuzzle(onExit, opts = {}) {
@@ -342,12 +342,24 @@ export function startPuzzle(onExit, opts = {}) {
     ctx.stroke();
   }
   function drawMarshall(x, y, s, freed) {
-    Art.drawDog(ctx, x + s / 2, y + s * 0.82, s * 0.62, -1, freed ? t * 6 : 0);
-    if (!freed) {
-      ctx.strokeStyle = "#4a4038"; ctx.lineWidth = Math.max(2, s * 0.05);
-      for (let i = 0; i <= 3; i++) { const bx = x + s * 0.14 + i * s * 0.24; ctx.beginPath(); ctx.moveTo(bx, y + s * 0.06); ctx.lineTo(bx, y + s * 0.94); ctx.stroke(); }
-      ctx.beginPath(); ctx.moveTo(x + s * 0.1, y + s * 0.06); ctx.lineTo(x + s * 0.9, y + s * 0.06); ctx.stroke();
+    if (freed) {                                 // rescued — the full happy dog appears
+      Art.drawDog(ctx, x + s / 2, y + s * 0.82, s * 0.62, -1, t * 6);
+      return;
     }
+    // captured: a covered cage with Marshall's eyes peeking from the dark inside
+    const cx = x + s / 2;
+    const bw = s * 0.72, bh = s * 0.66, bx = x + (s - bw) / 2, by = y + s * 0.26;
+    ctx.fillStyle = "#241f1a"; H.rr(ctx, bx, by, bw, bh, s * 0.07); ctx.fill();          // dark cage interior
+    ctx.fillStyle = "#8a6a42"; H.rr(ctx, bx - s * 0.05, by - s * 0.09, bw + s * 0.1, s * 0.16, s * 0.06); ctx.fill(); // cloth cover on top
+    // two glowing eyes peeking out
+    const ey = by + bh * 0.52, eo = s * 0.11;
+    H.circle(ctx, cx - eo, ey, s * 0.055, "#ffe08a"); H.circle(ctx, cx + eo, ey, s * 0.055, "#ffe08a");
+    H.circle(ctx, cx - eo, ey, s * 0.024, "#2b2440"); H.circle(ctx, cx + eo, ey, s * 0.024, "#2b2440");
+    // bars
+    ctx.strokeStyle = "#5a4d3e"; ctx.lineWidth = Math.max(2, s * 0.045);
+    for (let i = 0; i <= 3; i++) { const bxx = bx + bw * (i / 3); ctx.beginPath(); ctx.moveTo(bxx, by); ctx.lineTo(bxx, by + bh); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + bw, by); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.stroke();
   }
   function drawKate(x, y, s) {
     Art.drawPerson(ctx, Art.CHARS.kate, x + s / 2, y + s * 0.9, s * 1.05, kateFace, katePhase * 0.5, { blink: (t % 4) < 0.12 });
@@ -370,13 +382,23 @@ export function startPuzzle(onExit, opts = {}) {
     circleBtn(W * 0.75, baseY - r * 0.7, r * 0.86, "↶", () => sim.undo());
     circleBtn(W * 0.75, baseY + r * 1.1, r * 0.86, "⟲", () => sim.reset());
   }
+  // draw centered text, shrinking the font so it always fits within maxW
+  function fitText(text, cx, cy, weight, basePx, maxW, minPx) {
+    let px = basePx;
+    do {
+      ctx.font = weight + " " + px + "px 'Segoe UI', system-ui, sans-serif";
+      if (ctx.measureText(text).width <= maxW) break;
+      px -= 1;
+    } while (px > minPx);
+    ctx.fillText(text, cx, cy);
+  }
   function drawPuzzleHUD() {
     ctx.fillStyle = "rgba(20,30,55,0.4)"; ctx.fillRect(0, 0, W, 58);
+    const maxW = W - 24;
     ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.font = "700 18px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Alley " + (idx + 1) + "/" + PUZZLES.length + " — " + sim.name, W / 2, 20);
-    ctx.font = "500 13px 'Segoe UI', system-ui, sans-serif"; ctx.fillStyle = "#ffe08a";
-    ctx.fillText(sim.hint, W / 2, 42);
+    fitText("Закоулок " + (idx + 1) + "/" + PUZZLES.length + " — " + sim.name, W / 2, 20, "700", 18, maxW, 12);
+    ctx.fillStyle = "#ffe08a";
+    fitText(sim.hint, W / 2, 42, "500", 13, maxW, 9);
     ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
   }
   function renderPuzzle() {
@@ -461,14 +483,14 @@ export function startPuzzle(onExit, opts = {}) {
       ctx.textAlign = "center"; ctx.fillText("!", kx, groundY - 132);
     }
     // caption
-    const cap = csT < 2.0 ? "A peaceful evening stroll…" : "The dog-napper strikes — Marshall!!";
+    const cap = csT < 2.0 ? "Спокойная вечерняя прогулка…" : "Похитительница нападает — Маршалл!!";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.font = "600 18px 'Segoe UI', system-ui, sans-serif";
     const cw = ctx.measureText(cap).width + 32;
     ctx.fillStyle = "rgba(20,30,55,0.6)"; H.rr(ctx, W / 2 - cw / 2, HH * 0.85, cw, 40, 12); ctx.fill();
     ctx.fillStyle = csT < 2.0 ? "#fff" : "#ffd36b"; ctx.fillText(cap, W / 2, HH * 0.85 + 21);
     ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "500 13px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("tap to skip", W / 2, HH * 0.94);
+    ctx.fillText("нажми, чтобы пропустить", W / 2, HH * 0.94);
     ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
   }
   function renderStory() {
@@ -478,19 +500,19 @@ export function startPuzzle(onExit, opts = {}) {
     ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
     ctx.font = "56px serif"; ctx.fillText("🐾", W / 2, HH * 0.19);
     ctx.fillStyle = "#ffd36b"; ctx.font = "800 25px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("The Rescue of Marshall", W / 2, HH * 0.27);
+    ctx.fillText("Спасение Маршалла", W / 2, HH * 0.27);
     wrap(STORY, W / 2, HH * 0.37, 25, "500 15px 'Segoe UI', system-ui, sans-serif", "#e8eef6");
     ctx.fillStyle = "#fff"; ctx.font = "600 17px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Tap to begin the rescue  ▶", W / 2, HH * 0.84);
+    ctx.fillText("Нажми, чтобы начать спасение  ▶", W / 2, HH * 0.84);
     ctx.textAlign = "left";
   }
   function renderClearedOverlay() {
     ctx.fillStyle = "rgba(10,20,35,0.55)"; ctx.fillRect(0, 0, W, HH);
     ctx.textAlign = "center"; ctx.fillStyle = "#7cff9a";
     ctx.font = "800 30px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Alley cleared! 🐾", W / 2, HH * 0.46);
+    ctx.fillText("Закоулок пройден! 🐾", W / 2, HH * 0.46);
     ctx.fillStyle = "#fff"; ctx.font = "500 17px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("On to the next one…", W / 2, HH * 0.53);
+    ctx.fillText("Дальше, к следующему…", W / 2, HH * 0.53);
     ctx.textAlign = "left";
   }
   function renderVictory() {
@@ -532,34 +554,26 @@ export function startPuzzle(onExit, opts = {}) {
     const reunited = vicT > 1.4;
     if (!reunited) {                                       // Marshall races back in
       Art.drawDog(ctx, lerp(W * 1.15, kx + 44, ease(clamp01(vicT / 1.4))), groundY, 55, -1, vicT * 15);
-    } else {                                               // happy reunion hop + floating hearts
+    } else {                                               // happy reunion hop
       const hop = Math.abs(Math.sin((vicT - 1.4) * 6)) * 22 * Math.max(0, 1 - (vicT - 1.4) / 3.5);
       Art.drawDog(ctx, kx + 44, groundY - hop, 55, -1, t * 10);
-      ctx.textAlign = "center";
-      for (let i = 0; i < 4; i++) {
-        const hpr = ((vicT - 1.4) * 0.6 + i * 0.45) % 1.7;
-        ctx.globalAlpha = Math.max(0, 1 - hpr / 1.7);
-        ctx.font = (15 + i * 3) + "px serif";
-        ctx.fillText("💖", kx + 6 + i * 13, groundY - 58 - hpr * 62);
-      }
-      ctx.globalAlpha = 1; ctx.textAlign = "left";
     }
 
     // captions
     ctx.textAlign = "center";
     if (reunited) {
       ctx.fillStyle = "#fff"; ctx.font = "800 25px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("Marshall is home safe! 🐾", W / 2, HH * 0.73);
+      ctx.fillText("Маршалл дома, цел и невредим! 🐾", W / 2, HH * 0.73);
     }
     if (famA > 0.3) {
       ctx.globalAlpha = clamp01((famA - 0.3) / 0.5);
       ctx.fillStyle = "#ffe08a"; ctx.font = "700 22px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("Happy Birthday, Kate! 🎂💖", W / 2, HH * 0.79);
+      ctx.fillText("С днём рождения, Кейт! 🎂💖", W / 2, HH * 0.79);
       ctx.globalAlpha = 1;
     }
     if (vicT > 4.6) {
       ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 16px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("Tap to finish", W / 2, HH * 0.87);
+      ctx.fillText("Нажми, чтобы завершить", W / 2, HH * 0.87);
     }
     ctx.textAlign = "left";
   }

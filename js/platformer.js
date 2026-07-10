@@ -445,10 +445,16 @@ export async function startPlatformer(opts = {}) {
     drawHUD();
     // reminder at the cake if candles are still missing
     if (sim.state !== "won" && sim.candlesGot < sim.candlesTotal && Math.abs(k.x - LEVEL.goal.x) < 300) {
-      const msg = "Light the cake: find all candles  🕯️ " + sim.candlesGot + "/" + sim.candlesTotal;
+      const msg = "Зажги торт: найди все свечки  🕯️ " + sim.candlesGot + "/" + sim.candlesTotal;
       ctx.save();
-      ctx.font = "600 16px 'Segoe UI', system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      const bw = ctx.measureText(msg).width + 28;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      let mpx = 16;
+      do {
+        ctx.font = "600 " + mpx + "px 'Segoe UI', system-ui, sans-serif";
+        if (ctx.measureText(msg).width + 28 <= W - 12) break;
+        mpx -= 1;
+      } while (mpx > 10);
+      const bw = Math.min(W - 12, ctx.measureText(msg).width + 28);
       ctx.fillStyle = "rgba(20,30,55,0.62)"; H.rr(ctx, W / 2 - bw / 2, 58, bw, 34, 10); ctx.fill();
       ctx.fillStyle = "#ffe08a"; ctx.fillText(msg, W / 2, 76);
       ctx.restore();
@@ -608,10 +614,10 @@ export async function startPlatformer(opts = {}) {
     H.rr(ctx, x - 116, by - 214, 232, 110, 12); ctx.fill(); ctx.stroke();
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillStyle = "#c0506e"; ctx.font = "700 19px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Reach the cake! 🎂", x, by - 189);
+    ctx.fillText("Доберись до торта! 🎂", x, by - 189);
     ctx.fillStyle = "#6b6480"; ctx.font = "600 15px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Collect ALL 33 candles 🕯️", x, by - 162);
-    ctx.fillText("Protect your dog! 🐾", x, by - 138);
+    ctx.fillText("Собери ВСЕ 33 свечки 🕯️", x, by - 162);
+    ctx.fillText("Защищай свою собаку! 🐾", x, by - 138);
     // bouncing "this way" arrow
     const ax = x + 70 + Math.sin(time * 4) * 6;
     ctx.strokeStyle = "#e5688b"; ctx.lineWidth = 5; ctx.lineCap = "round";
@@ -697,15 +703,13 @@ export async function startPlatformer(opts = {}) {
     Art.drawDog(ctx, W / 2 + totalW / 2 + gap * 0.6, fy, fh * 0.44, -1, sim.winT * 4);
 
     ctx.fillStyle = "#fff"; ctx.textAlign = "center";
-    ctx.font = "800 26px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("You lit the cake! 🎂", W / 2, HH * 0.56);
-    ctx.font = "500 18px 'Segoe UI', system-ui, sans-serif";
+    fitLine("Ты зажгла торт! 🎂", W / 2, HH * 0.56, "800", 26, 16);
     const all = sim.collected >= LEVEL.hearts.length;
-    ctx.fillText("All " + sim.candlesTotal + " candles lit 🕯️", W / 2, HH * 0.62);
-    ctx.fillText("You gathered " + sim.collected + " of " + LEVEL.hearts.length + " hearts of love 💖", W / 2, HH * 0.67);
+    fitLine("Все " + sim.candlesTotal + " свечек горят 🕯️", W / 2, HH * 0.62, "500", 18, 12);
+    fitLine("Ты собрала " + sim.collected + " из " + LEVEL.hearts.length + " сердечек любви 💖", W / 2, HH * 0.67, "500", 18, 11);
     if (all) {
-      ctx.fillStyle = "#ffe08a"; ctx.font = "700 18px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("★ Every single one — perfect! ★", W / 2, HH * 0.72);
+      ctx.fillStyle = "#ffe08a";
+      fitLine("★ Все до единого — идеально! ★", W / 2, HH * 0.72, "700", 18, 12);
     }
     ctx.restore();
 
@@ -713,18 +717,36 @@ export async function startPlatformer(opts = {}) {
     winBtns = [];
     const bw = Math.min(300, W - 60), bx = W / 2 - bw / 2;
     const y1 = HH * (all ? 0.77 : 0.74), y2 = y1 + 58;
-    winPill(bx, y1, bw, 46, "🐾 Rescue Marshall (Level 2) →", "#ffd36b", "#6a4a00", () => opts.onLevel2 && opts.onLevel2());
-    winPill(bx, y2, bw, 42, "Play again", "rgba(255,255,255,0.14)", "#fff", () => sim.reset());
+    winPill(bx, y1, bw, 46, "🐾 Спасти Маршалла (Уровень 2) →", "#ffd36b", "#6a4a00", () => opts.onLevel2 && opts.onLevel2());
+    winPill(bx, y2, bw, 42, "Играть снова", "rgba(255,255,255,0.14)", "#fff", () => sim.reset());
     ctx.textAlign = "left";
   }
 
   function winPill(x, y, w, h, label, bg, fg, act) {
     ctx.fillStyle = bg; H.rr(ctx, x, y, w, h, h / 2); ctx.fill();
-    ctx.fillStyle = fg; ctx.font = "700 16px 'Segoe UI', system-ui, sans-serif";
+    ctx.fillStyle = fg;
+    let px = 16;
+    do {
+      ctx.font = "700 " + px + "px 'Segoe UI', system-ui, sans-serif";
+      if (ctx.measureText(label).width <= w - 20) break;
+      px -= 1;
+    } while (px > 10);
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(label, x + w / 2, y + h / 2 + 1);
     ctx.textBaseline = "alphabetic";
     winBtns.push({ x, y, w, h, act });
+  }
+
+  // centered text that shrinks its font so it always fits within the screen
+  function fitLine(text, cx, cy, weight, basePx, minPx) {
+    const maxW = W - 28;
+    let px = basePx;
+    do {
+      ctx.font = weight + " " + px + "px 'Segoe UI', system-ui, sans-serif";
+      if (ctx.measureText(text).width <= maxW) break;
+      px -= 1;
+    } while (px > minPx);
+    ctx.fillText(text, cx, cy);
   }
 
   function drawLost() {
@@ -735,20 +757,20 @@ export async function startPlatformer(opts = {}) {
     if (dogLost) {
       Art.drawDog(ctx, W / 2, HH * 0.44, 90, -1, 0);
       ctx.fillStyle = "#fff"; ctx.font = "800 25px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("Keep the pup safe! 🐾", W / 2, HH * 0.55);
-      ctx.font = "500 17px 'Segoe UI', system-ui, sans-serif"; ctx.fillStyle = "#f4c9d3";
-      ctx.fillText("The dog got hurt — stomp enemies before", W / 2, HH * 0.61);
-      ctx.fillText("they reach it. Kate must protect the dog!", W / 2, HH * 0.645);
+      fitLine("Береги щенка! 🐾", W / 2, HH * 0.55, "800", 25, 16);
+      ctx.fillStyle = "#f4c9d3";
+      fitLine("Собаке досталось — топчи врагов, пока", W / 2, HH * 0.61, "500", 17, 11);
+      fitLine("они до неё не добрались. Кейт, защити пса!", W / 2, HH * 0.645, "500", 17, 11);
     } else {
       ctx.font = "60px serif"; ctx.fillText("💔", W / 2, HH * 0.42);
-      ctx.fillStyle = "#fff"; ctx.font = "800 25px 'Segoe UI', system-ui, sans-serif";
-      ctx.fillText("Out of hearts!", W / 2, HH * 0.55);
-      ctx.font = "500 17px 'Segoe UI', system-ui, sans-serif"; ctx.fillStyle = "#f4c9d3";
-      ctx.fillText("Enemies bite and every sea-fall costs a", W / 2, HH * 0.61);
-      ctx.fillText("heart. Run out and the journey ends!", W / 2, HH * 0.645);
+      ctx.fillStyle = "#fff";
+      fitLine("Сердечки кончились!", W / 2, HH * 0.55, "800", 25, 16);
+      ctx.fillStyle = "#f4c9d3";
+      fitLine("Враги кусаются, и каждое падение в море", W / 2, HH * 0.61, "500", 17, 11);
+      fitLine("стоит сердечка. Кончатся — путешествие окончено!", W / 2, HH * 0.645, "500", 17, 11);
     }
-    ctx.fillStyle = "#fff"; ctx.font = "600 18px 'Segoe UI', system-ui, sans-serif";
-    ctx.fillText("Tap to try again", W / 2, HH * 0.71);
+    ctx.fillStyle = "#fff";
+    fitLine("Нажми, чтобы попробовать снова", W / 2, HH * 0.71, "600", 18, 12);
     ctx.textAlign = "left";
     ctx.restore();
   }

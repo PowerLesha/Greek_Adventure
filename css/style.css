@@ -48,7 +48,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
+  overflow-y: auto;
   background: radial-gradient(circle at 50% 30%, #3a7ca5 0%, #16324f 70%, #0d1b2a 100%);
 }
 
@@ -75,7 +76,7 @@ body {
 
 .start-card h1 {
   margin: 6px 0 8px;
-  font-size: 27px;
+  font-size: clamp(21px, 6.4vw, 27px);
   color: var(--sea);
   letter-spacing: 0.3px;
 }
@@ -93,8 +94,8 @@ body {
 
 .start-sub {
   color: #6b6480;
-  font-size: 15px;
-  margin: 16px 6px 22px;
+  font-size: clamp(13px, 3.8vw, 15px);
+  margin: 16px 4px 22px;
   line-height: 1.5;
 }
 
@@ -108,20 +109,22 @@ body {
 }
 .difficulty {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 18px;
 }
 .diff-btn,
 .mdiff-btn {
   flex: 1;
+  min-width: 0;
   border: 2px solid #d8cdbb;
   background: #fbf6ee;
   color: #8a7f6a;
   font-weight: 700;
-  font-size: 15px;
-  padding: 10px 0;
+  font-size: clamp(12px, 3.5vw, 15px);
+  padding: 10px 2px;
   border-radius: 12px;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform 0.06s ease;
 }
 .diff-btn:active,
@@ -254,4 +257,20 @@ body {
 @media (min-width: 620px) {
   .ctrl-btn { width: 86px; height: 86px; }
   .jump-btn { width: 100px; height: 100px; }
+}
+
+/* ---------- Narrow phones: keep the start/menu cards inside the screen ---------- */
+@media (max-width: 380px) {
+  .start-card,
+  .menu-card { padding: 24px 18px 22px; }
+  .start-card h1 { font-size: 23px; }
+  .start-sub { font-size: 14px; margin: 14px 2px 20px; }
+  .diff-btn,
+  .mdiff-btn { font-size: 13px; padding: 10px 1px; }
+  .big-btn { font-size: 18px; }
+}
+@media (max-width: 330px) {
+  .start-card h1 { font-size: 21px; }
+  .diff-btn,
+  .mdiff-btn { font-size: 12px; }
 }
